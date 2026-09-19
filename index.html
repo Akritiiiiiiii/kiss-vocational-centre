@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KISS Vocational Centre: training, production and distribution</title>
+<meta name="description" content="A student design prototype of a training, production and distribution system for vocational programs at KISS. Not an official KISS website.">
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#FFFFFF">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0E1424">
+<meta property="og:type" content="website">
+<meta property="og:title" content="KISS Vocational Centre: training, production and distribution">
+<meta property="og:description" content="A student design prototype for tracking trainees, production, store stock and dispatch to schools.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="rozha-one-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="mukta-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="mukta-latin-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+<div class="selvedge" aria-hidden="true"></div>
+<header class="mast">
+  <div class="wrap">
+    <a class="brand" href="#overview">KISS Vocational Centre</a>
+    <nav aria-label="Sections">
+      <a href="#overview" aria-current="page">Overview</a>
+      <a href="#trainees">Trainees</a>
+      <a href="#store">Store and dispatch</a>
+      <a href="#forecast">Forecast</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="main" tabindex="-1">
+
+<noscript><p class="nojs">This prototype needs JavaScript. Turn it on for this site and reload the page.</p></noscript>
+
+<!-- OVERVIEW -->
+<section class="view on" id="view-overview">
+  <div class="lede">
+    <h1 id="headline" tabindex="-1"></h1>
+    <p id="subline"></p>
+    <a class="btn" href="#forecast">See how much to make</a>
+  </div>
+
+  <ul class="chain" id="chain"></ul>
+
+  <div class="two">
+    <div>
+      <h2>Stock cover</h2>
+      <ul class="plain cover" id="cover"></ul>
+    </div>
+    <div>
+      <h2>Latest movements</h2>
+      <ul class="plain ledger" id="ledger"></ul>
+    </div>
+  </div>
+</section>
+
+<!-- TRAINEES -->
+<section class="view" id="view-trainees">
+  <h1 class="page-title" tabindex="-1">Trainees</h1>
+  <p class="page-intro">Each student joins one program. Every shift in a production unit adds to their production score. When the score reaches the program's target, the trainer issues a certificate with the training profile.</p>
+
+  <div class="forms">
+    <form id="reg-form" novalidate>
+      <h2>Register a trainee</h2>
+      <div class="field">
+        <label for="reg-name">Student name</label>
+        <input id="reg-name" type="text" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="reg-id">Student ID</label>
+        <input id="reg-id" type="text" autocomplete="off" placeholder="KS26-0000">
+      </div>
+      <div class="field">
+        <label for="reg-program">Program</label>
+        <select id="reg-program"></select>
+      </div>
+      <div class="form-actions"><button class="btn" type="submit">Register trainee</button></div>
+      <div class="msg" id="reg-msg" role="status"></div>
+    </form>
+
+    <form id="shift-form" novalidate>
+      <h2>Add a production shift</h2>
+      <div class="field">
+        <label for="shift-trainee">Trainee</label>
+        <select id="shift-trainee"></select>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="shift-hours">Hours worked</label>
+          <input id="shift-hours" type="number" min="1" max="12" step="1" value="6">
+        </div>
+        <div class="field">
+          <label for="shift-units">Units made</label>
+          <input id="shift-units" type="number" min="0" step="1" value="0">
+        </div>
+      </div>
+      <p class="field-hint" id="units-hint"></p>
+      <div class="form-actions"><button class="btn" type="submit">Add shift</button></div>
+      <div class="msg" id="shift-msg" role="status"></div>
+    </form>
+  </div>
+
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Trainee</th>
+          <th scope="col">Program</th>
+          <th scope="col" class="num">Days</th>
+          <th scope="col" class="num">Hours</th>
+          <th scope="col" class="num">Units made</th>
+          <th scope="col">Production score</th>
+          <th scope="col">Certificate</th>
+        </tr>
+      </thead>
+      <tbody id="trainee-rows"></tbody>
+    </table>
+  </div>
+  <p class="rules">Production score is hours worked plus units made. The target is 400 for handicraft, tailoring and cleaning materials, and 240 for fundamentals of computers, which is training only and sends nothing to the store.</p>
+</section>
+
+<!-- STORE -->
+<section class="view" id="view-store">
+  <h1 class="page-title" tabindex="-1">Store and dispatch</h1>
+  <p class="page-intro">Everything the production units make goes into the store. Stock leaves only when it is sent to a school, and each dispatch is written to the ledger.</p>
+
+  <div class="scroll block">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Product</th>
+          <th scope="col">Made in</th>
+          <th scope="col" class="num">In store</th>
+          <th scope="col">Cover at current use</th>
+        </tr>
+      </thead>
+      <tbody id="stock-rows"></tbody>
+    </table>
+  </div>
+
+  <div class="forms">
+    <form id="disp-form" novalidate>
+      <h2>Send to a school</h2>
+      <div class="field">
+        <label for="disp-school">School</label>
+        <select id="disp-school"></select>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="disp-item">Product</label>
+          <select id="disp-item"></select>
+        </div>
+        <div class="field">
+          <label for="disp-qty">Quantity</label>
+          <input id="disp-qty" type="number" min="1" step="1" value="10">
+        </div>
+      </div>
+      <p class="field-hint" id="disp-hint"></p>
+      <div class="form-actions"><button class="btn" type="submit">Send to school</button></div>
+      <div class="msg" id="disp-msg" role="status"></div>
+    </form>
+    <div>
+      <h2>Recent dispatches</h2>
+      <ul class="plain ledger spaced" id="dispatches"></ul>
+    </div>
+  </div>
+</section>
+
+<!-- FORECAST -->
+<section class="view" id="view-forecast">
+  <h1 class="page-title" tabindex="-1">How much to make</h1>
+  <p class="page-intro">Each school's use over the last three months, scaled to its staff today, gives next month's demand. Whatever the store cannot cover, plus a buffer, is what the production units need to make.</p>
+
+  <div class="controls">
+    <label for="buffer">Buffer to keep in the store<output id="buffer-out" for="buffer"></output></label>
+    <input id="buffer" type="range" min="0" max="4" step="0.5" value="2">
+  </div>
+
+  <div class="makes" id="makes"></div>
+
+  <div class="block">
+    <h2>Demand by school</h2>
+    <p class="formula">Forecast = average monthly use over the last three months × (staff now ÷ staff when that use was measured). Staff means teaching and non-teaching staff. Change a headcount to see the forecast move.</p>
+    <div class="scroll" id="forecast-table"></div>
+  </div>
+</section>
+
+<footer class="sample">
+  <p>Student design prototype, not an official KISS website. Names, stock and school figures are made up. Your changes are saved in this browser only.</p>
+  <button class="btn ghost sm" type="button" id="reset">Reset sample data</button>
+</footer>
+</main>
+
+<dialog id="profile" aria-labelledby="profile-title">
+  <div class="cert">
+    <h2 id="profile-title">Training profile</h2>
+    <p class="muted" id="profile-sub"></p>
+    <dl id="profile-body"></dl>
+    <form method="dialog" class="cert-actions">
+      <button class="btn" type="submit">Close</button>
+      <button class="btn ghost" type="button" id="print-profile">Print profile</button>
+    </form>
+  </div>
+</dialog>
+
+</body>
+</html>
